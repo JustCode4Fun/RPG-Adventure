@@ -2,8 +2,15 @@
 #include <glfw3.h>
 #include <math.h>
 #include <iostream>
+#include "Engine.h"
 
 int main() {
+
+	Console::printDMessage("There is an interesting message for you: Welcome!");
+	Console::printDWarning("Just wanted to warn you!!!");
+	Console::printDError("Couldn't init GLFW!\nSomething went terribly wrong!!!");
+	system("pause");
+	return 0;
 	GLFWwindow* window;
 
 	/* Initialize the library */
