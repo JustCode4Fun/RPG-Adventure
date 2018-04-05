@@ -1,6 +1,8 @@
 #pragma once
 
 #include <string>
+
+#include <gl\GLEW.h>
 #include <glfw3.h>
 
 class Window {
@@ -18,6 +20,10 @@ private:
 	void initGLFW();
 	void createGLFWWindow();
 	void initGLEW();
+public:
+	void update();
+public:
+	inline bool shouldClose() { return glfwWindowShouldClose(m_window)!=0; };
 public:
 	inline const int getWidth() { return m_width; };
 	inline const int getHeight() { return m_height; };

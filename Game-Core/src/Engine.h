@@ -59,6 +59,10 @@ public:
 	static void PrintWarning(const std::string& warning);
 	static void PrintError(const std::string& error);
 	static void PrintFatal(const std::string& fatal);
+
+	static void Print(const std::string& str);
+	template <typename T>
+	static void Print(const T& t);
 public:
 	static void Pause();
 	static void Pause(const std::string& message);

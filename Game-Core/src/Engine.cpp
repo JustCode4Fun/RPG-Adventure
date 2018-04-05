@@ -14,7 +14,7 @@ const Console::Theme Console::c_DefaultTheme = Theme(BrightWhite, Black);
 
 
 #ifdef E_DEBUG
-Console::LogLevel Console::currLogLevel = Console::LogLevel::MESSAGE_LEVEL;
+Console::LogLevel Console::s_CurrLogLevel = Console::LogLevel::MESSAGE_LEVEL;
 #else
 Console::LogLevel Console::s_CurrLogLevel = Console::LogLevel::FATAL_LEVEL;
 #endif // E_DEBUG
@@ -96,16 +96,35 @@ void Console::PrintError(const std::string & error)
 void Console::PrintFatal(const std::string& fatal) {
 	if (s_CurrLogLevel < LogLevel::FATAL_LEVEL) return;
 	SetConsoleTheme(c_FatalTheme);
+	#ifdef E_WINDOWS
 	std::cout << getTimeString();
 	std::cout << fatal << std::endl;
+	#endif
 	ResetConsoleTheme();
+}
+
+void Console::Print(const std::string & str)
+{
+	ResetConsoleTheme();
+	#ifdef E_WINDOWS
+	std::cout << str << std::endl;
+	#endif
+}
+
+template <typename T>
+void Console::Print(const T& t)
+{
+	ResetConsoleTheme();
+	#ifdef E_WINDOWS
+	std::cout << t << std::endl;
+	#endif
 }
 
 void Console::Pause()
 {
 	#ifdef E_WINDOWS
 	system("pause");
-	#endif // E_WINDOWS
+	#endif
 }
 
 void Console::Pause(const std::string & message)
