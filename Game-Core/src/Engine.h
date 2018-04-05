@@ -38,6 +38,15 @@ public:
 
 	static const Theme defaultTheme;
 
+public:
+	enum LogLevel {
+		NO_LOGGING_LEVEL = 0,
+		FATAL_LEVEL = 1,
+		ERROR_LEVEL = 2,
+		WARNING_LEVEL = 3,
+		MESSAGE_LEVEL = 4,
+	};
+	static LogLevel currLogLevel;
 private:
 	static std::string getTimeString();
 

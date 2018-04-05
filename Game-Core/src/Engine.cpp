@@ -12,6 +12,13 @@ const Console::Theme Console::fatalTheme = Theme(BrightWhite, LightRed);
 
 const Console::Theme Console::defaultTheme = Theme(BrightWhite, Black);
 
+
+#ifdef E_DEBUG
+Console::LogLevel Console::currLogLevel = Console::LogLevel::MESSAGE_LEVEL;
+#else
+Console::LogLevel Console::currLogLevel = Console::LogLevel::FATAL_LEVEL;
+#endif // E_DEBUG
+
 std::string Console::getTimeString()
 {
 	time_t t = time(0); // TODO: Put this into its own class
@@ -55,6 +62,7 @@ void Console::resetConsoleTheme()
 
 void Console::printMessage(const std::string & message)
 {
+	if (currLogLevel < LogLevel::MESSAGE_LEVEL) return;
 	setConsoleTheme(messageTheme);
 	std::cout << getTimeString();
 	#ifdef E_WINDOWS
@@ -65,6 +73,7 @@ void Console::printMessage(const std::string & message)
 
 void Console::printWarning(const std::string & warning)
 {
+	if (currLogLevel < LogLevel::WARNING_LEVEL) return;
 	setConsoleTheme(warningTheme);
 	std::cout << getTimeString();
 	#ifdef E_WINDOWS
@@ -75,6 +84,7 @@ void Console::printWarning(const std::string & warning)
 
 void Console::printError(const std::string & error)
 {
+	if (currLogLevel < LogLevel::ERROR_LEVEL) return;
 	setConsoleTheme(errorTheme);
 	std::cout << getTimeString();
 	#ifdef E_WINDOWS
@@ -84,6 +94,7 @@ void Console::printError(const std::string & error)
 }
 
 void Console::printFatal(const std::string& fatal) {
+	if (currLogLevel < LogLevel::FATAL_LEVEL) return;
 	setConsoleTheme(fatalTheme);
 	std::cout << getTimeString();
 	std::cout << fatal << std::endl;
