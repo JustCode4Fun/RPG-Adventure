@@ -5,18 +5,18 @@
 #include <ctime>
 #endif
 
-const Console::Theme Console::messageTheme = Theme(BrightWhite, Black);
-const Console::Theme Console::warningTheme = Theme(LightYellow, Black);
-const Console::Theme Console::errorTheme = Theme(LightRed, Black);
-const Console::Theme Console::fatalTheme = Theme(BrightWhite, LightRed);
+const Console::Theme Console::c_MessageTheme = Theme(BrightWhite, Black);
+const Console::Theme Console::c_WarningTheme = Theme(LightYellow, Black);
+const Console::Theme Console::c_ErrorTheme = Theme(LightRed, Black);
+const Console::Theme Console::c_FatalTheme = Theme(BrightWhite, LightRed);
 
-const Console::Theme Console::defaultTheme = Theme(BrightWhite, Black);
+const Console::Theme Console::c_DefaultTheme = Theme(BrightWhite, Black);
 
 
 #ifdef E_DEBUG
 Console::LogLevel Console::currLogLevel = Console::LogLevel::MESSAGE_LEVEL;
 #else
-Console::LogLevel Console::currLogLevel = Console::LogLevel::FATAL_LEVEL;
+Console::LogLevel Console::s_CurrLogLevel = Console::LogLevel::FATAL_LEVEL;
 #endif // E_DEBUG
 
 std::string Console::getTimeString()
@@ -42,61 +42,74 @@ std::string Console::getTimeString()
 	return time;
 }
 
-void Console::setConsoleTheme(ThemeColor font, ThemeColor background)
+void Console::SetConsoleTheme(ThemeColor font, ThemeColor background)
 {
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), (WORD)(background<<1)|(WORD)(font));
 }
 
-void Console::setConsoleTheme(Theme theme)
+void Console::SetConsoleTheme(Theme theme)
 {
 	WORD t = (WORD)(theme.m_background << 4) | (WORD)(theme.m_font);
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), t);
 }
 
-void Console::resetConsoleTheme()
+void Console::ResetConsoleTheme()
 {
 	#ifdef E_WINDOWS
-	setConsoleTheme(defaultTheme);
+	SetConsoleTheme(c_DefaultTheme);
 	#endif
 }
 
-void Console::printMessage(const std::string & message)
+void Console::PrintMessage(const std::string & message)
 {
-	if (currLogLevel < LogLevel::MESSAGE_LEVEL) return;
-	setConsoleTheme(messageTheme);
+	if (s_CurrLogLevel < LogLevel::MESSAGE_LEVEL) return;
+	SetConsoleTheme(c_MessageTheme);
 	std::cout << getTimeString();
 	#ifdef E_WINDOWS
 	std::cout << message << std::endl;
 	#endif
-	resetConsoleTheme();
+	ResetConsoleTheme();
 }
 
-void Console::printWarning(const std::string & warning)
+void Console::PrintWarning(const std::string & warning)
 {
-	if (currLogLevel < LogLevel::WARNING_LEVEL) return;
-	setConsoleTheme(warningTheme);
+	if (s_CurrLogLevel < LogLevel::WARNING_LEVEL) return;
+	SetConsoleTheme(c_WarningTheme);
 	std::cout << getTimeString();
 	#ifdef E_WINDOWS
 	std::cout << warning << std::endl;
 	#endif
-	resetConsoleTheme();
+	ResetConsoleTheme();
 }
 
-void Console::printError(const std::string & error)
+void Console::PrintError(const std::string & error)
 {
-	if (currLogLevel < LogLevel::ERROR_LEVEL) return;
-	setConsoleTheme(errorTheme);
+	if (s_CurrLogLevel < LogLevel::ERROR_LEVEL) return;
+	SetConsoleTheme(c_ErrorTheme);
 	std::cout << getTimeString();
 	#ifdef E_WINDOWS
 	std::cout << error << std::endl;
 	#endif
-	resetConsoleTheme();
+	ResetConsoleTheme();
 }
 
-void Console::printFatal(const std::string& fatal) {
-	if (currLogLevel < LogLevel::FATAL_LEVEL) return;
-	setConsoleTheme(fatalTheme);
+void Console::PrintFatal(const std::string& fatal) {
+	if (s_CurrLogLevel < LogLevel::FATAL_LEVEL) return;
+	SetConsoleTheme(c_FatalTheme);
 	std::cout << getTimeString();
 	std::cout << fatal << std::endl;
-	resetConsoleTheme();
+	ResetConsoleTheme();
+}
+
+void Console::Pause()
+{
+	#ifdef E_WINDOWS
+	system("pause");
+	#endif // E_WINDOWS
+}
+
+void Console::Pause(const std::string & message)
+{
+	Pause();
+	PrintMessage(message);
 }

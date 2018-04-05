@@ -31,12 +31,12 @@ private:
 
 	};
 public:
-	static const Theme messageTheme;
-	static const Theme warningTheme;
-	static const Theme errorTheme;
-	static const Theme fatalTheme;
+	static const Theme c_MessageTheme;
+	static const Theme c_WarningTheme;
+	static const Theme c_ErrorTheme;
+	static const Theme c_FatalTheme;
 
-	static const Theme defaultTheme;
+	static const Theme c_DefaultTheme;
 
 public:
 	enum LogLevel {
@@ -46,17 +46,20 @@ public:
 		WARNING_LEVEL = 3,
 		MESSAGE_LEVEL = 4,
 	};
-	static LogLevel currLogLevel;
+	static LogLevel s_CurrLogLevel;
 private:
 	static std::string getTimeString();
 
 private:
-	static void setConsoleTheme(ThemeColor font, ThemeColor background);
-	static void setConsoleTheme(Theme theme);
-	static void resetConsoleTheme();
+	static void SetConsoleTheme(ThemeColor font, ThemeColor background);
+	static void SetConsoleTheme(Theme theme);
+	static void ResetConsoleTheme();
 public:
-	static void printMessage(const std::string& message);
-	static void printWarning(const std::string& warning);
-	static void printError(const std::string& error);
-	static void printFatal(const std::string& fatal);
+	static void PrintMessage(const std::string& message);
+	static void PrintWarning(const std::string& warning);
+	static void PrintError(const std::string& error);
+	static void PrintFatal(const std::string& fatal);
+public:
+	static void Pause();
+	static void Pause(const std::string& message);
 };

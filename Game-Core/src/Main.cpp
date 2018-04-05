@@ -5,13 +5,6 @@
 #include "Engine.h"
 
 int main() {
-
-	Console::printMessage("There is an interesting message for you: Welcome!");
-	Console::printWarning("Just wanted to warn you!!!");
-	Console::printError("Couldn't init GLFW!\n\t\t\tSomething went terribly wrong!!!");
-	Console::printFatal("Ooops!!!Terminating...");
-	system("pause");
-	return 0;
 	GLFWwindow* window;
 
 	/* Initialize the library */
