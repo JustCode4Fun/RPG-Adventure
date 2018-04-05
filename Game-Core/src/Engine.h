@@ -1,6 +1,20 @@
 #pragma once
 
 #include <string>
+#include <cstdint>
+#include <fl>
+
+typedef int8_t _bool;
+typedef int8_t _byte;
+typedef uint8_t _ubyte;
+typedef int16_t _short;
+typedef uint16_t _ushort;
+typedef int32_t _int;
+typedef uint32_t _uint;
+typedef int64_t _long;
+typedef uint64_t _ulong;
+typedef float _float;
+typedef double _double;
 
 class Console {
 private:
@@ -27,7 +41,7 @@ private:
 		ThemeColor m_font, m_background;
 
 		Theme(ThemeColor font, ThemeColor background) : m_font(font), m_background(background) {};
-		Theme(int theme) { m_font = ThemeColor(theme >> 1); m_background = ThemeColor(theme & 0x0f); };
+		Theme(_int theme) { m_font = ThemeColor(theme >> 1); m_background = ThemeColor(theme & 0x0f); };
 
 	};
 public:

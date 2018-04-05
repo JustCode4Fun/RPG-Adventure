@@ -7,7 +7,7 @@
 
 Window* Window::WINDOW_INSTANCE = nullptr;
 
-Window::Window(const int width, const int height, const std::string& title)
+Window::Window(const _int width, const _int height, const std::string& title)
 	:m_width(width), m_height(height), m_title(title)
 {
 	WINDOW_INSTANCE = this;
@@ -64,7 +64,7 @@ void Window::initGLEW()
 
 void Window::update()
 {
-	float alpha = cosf(glfwGetTime())*0.5f + 0.5f;
+	_float alpha = cosf(glfwGetTime())*0.5f + 0.5f;
 	/* Render here */
 	glClear(GL_COLOR_BUFFER_BIT);
 	glClearColor(1, 1, 0, 1);
