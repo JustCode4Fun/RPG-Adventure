@@ -2,10 +2,9 @@
 
 #include <string>
 
-
 class Console {
 private:
-	enum class FontColor
+	enum ThemeColor
 	{
 		Black = 0x00,
 		Blue = 0x01,
@@ -24,22 +23,31 @@ private:
 		LightYellow = 0x0e,
 		BrightWhite = 0x0f,
 	};
-public:
-	static const FontColor messageColor;
-	static const FontColor warningColor;
-	static const FontColor errorColor;
+	struct Theme {
+		ThemeColor m_font, m_background;
 
-	static const FontColor defaultColor;
+		Theme(ThemeColor font, ThemeColor background) : m_font(font), m_background(background) {};
+		Theme(int theme) { m_font = ThemeColor(theme >> 1); m_background = ThemeColor(theme & 0x0f); };
+
+	};
+public:
+	static const Theme messageTheme;
+	static const Theme warningTheme;
+	static const Theme errorTheme;
+	static const Theme fatalTheme;
+
+	static const Theme defaultTheme;
 
 private:
-	static void setFontColor(FontColor c);
-	static void resetFontColor();
+	static std::string getTimeString();
+
+private:
+	static void setConsoleTheme(ThemeColor font, ThemeColor background);
+	static void setConsoleTheme(Theme theme);
+	static void resetConsoleTheme();
 public:
 	static void printMessage(const std::string& message);
 	static void printWarning(const std::string& warning);
 	static void printError(const std::string& error);
-
-	static void printDMessage(const std::string& message);
-	static void printDWarning(const std::string& warning);
-	static void printDError(const std::string& error);
+	static void printFatal(const std::string& fatal);
 };
