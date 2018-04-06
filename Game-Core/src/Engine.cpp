@@ -1,7 +1,9 @@
 #include "Engine.h"
+#include <GL\glew.h>
 #ifdef E_WINDOWS
 #include <Windows.h>
 #include <iostream>
+#include <fstream>
 #include <ctime>
 #endif
 
@@ -18,6 +20,19 @@ Console::LogLevel Console::s_CurrLogLevel = Console::LogLevel::MESSAGE_LEVEL;
 #else
 Console::LogLevel Console::s_CurrLogLevel = Console::LogLevel::FATAL_LEVEL;
 #endif // E_DEBUG
+
+// TODO: Put these in seperate class
+void GLClearError() {
+	while (glGetError()!=GL_NO_ERROR);
+}
+bool GLPrintError() {
+	while (GLenum err = glGetError()) {
+		Console::PrintFatal("OpenGL Error: " + std::to_string(err));
+		return false;
+	}
+	return true;
+}
+/////////////////////
 
 std::string Console::getTimeString()
 {
@@ -131,4 +146,23 @@ void Console::Pause(const std::string & message)
 {
 	Pause();
 	PrintMessage(message);
+}
+
+std::string loadFileToString(const std::string & path)
+{
+	std::ifstream f;
+	f.open(path, std::ios::binary | std::ios::ate);
+
+	if (!f.is_open())
+	{
+		Console::PrintError("Couldn't open file at path: " + path);
+		return "";
+	}
+	std::streampos size = f.tellg();
+	char* buffer = new char[(_int)size+1];
+	f.seekg(0, std::ios::beg);
+	f.read(buffer, size);
+	buffer[size] = '\0';
+	f.close();
+	return std::string(buffer, (_int)size+1);
 }

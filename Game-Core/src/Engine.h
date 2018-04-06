@@ -2,7 +2,21 @@
 
 #include <string>
 #include <cstdint>
-#include <fl>
+/////////////////////
+#ifdef E_DEBUG
+#define ASSERT(x) if(!x) __debugbreak(); // Take care of alternatives
+#define GLCall(x) GLClearError();\
+	x;\
+	ASSERT(GLPrintError())
+#else
+	#define ASSERT(x) x
+	#define GLCall(x) x
+
+#endif
+	// TODO: Put these in seperate class
+void GLClearError();
+bool GLPrintError();
+/////////////////////
 
 typedef int8_t _bool;
 typedef int8_t _byte;
@@ -52,7 +66,7 @@ public:
 
 	static const Theme c_DefaultTheme;
 
-public:
+private:
 	enum LogLevel {
 		NO_LOGGING_LEVEL = 0,
 		FATAL_LEVEL = 1,
@@ -81,3 +95,5 @@ public:
 	static void Pause();
 	static void Pause(const std::string& message);
 };
+
+std::string loadFileToString(const std::string& path); // TODO: Put this in seperate class
