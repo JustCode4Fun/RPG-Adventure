@@ -64,22 +64,12 @@ void Window::initGLEW()
 
 void Window::update()
 {
-	_float alpha = cosf(glfwGetTime())*0.5f + 0.5f;
-	/* Render here */
-	glClear(GL_COLOR_BUFFER_BIT);
 	glClearColor(1, 1, 0, 1);
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glBegin(GL_TRIANGLES);
-	glColor4f(1.0f, 0.0f, 1.0f, alpha);
-	glVertex2f(0.0f, 0.5f);
-	glVertex2f(0.5f, -0.5f);
-	glVertex2f(-0.5f, -0.5f);
-	glEnd();
+
 
 	/* Swap front and back buffers */
 	glfwSwapBuffers(m_window);
-
+	glClear(GL_COLOR_BUFFER_BIT);
 	/* Poll for and process events */
 	glfwPollEvents();
 }

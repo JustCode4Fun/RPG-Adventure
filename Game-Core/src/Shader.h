@@ -25,6 +25,10 @@ public:
 	void disable();
 private:
 	void init();
+public:
+	void setUniform1f(const char* name, float v);
+private:
+	_int getUniformLocation(const char* name);
 private:
 	std::string loadShader(ShaderType type);
 	std::string loadShaderSourceCode(ShaderType type);

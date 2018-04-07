@@ -48,6 +48,16 @@ void Shader::init()
 	}
 }
 
+void Shader::setUniform1f(const char * name, float v)
+{
+	glProgramUniform1f(m_progID, getUniformLocation(name), v);
+}
+
+_int Shader::getUniformLocation(const char * name)
+{
+	return glGetUniformLocation(m_progID, name);
+}
+
 std::string Shader::GetStringFromShaderType(ShaderType type)
 {
 	switch (type)
@@ -96,6 +106,7 @@ std::string Shader::loadShader(ShaderType type)
 		Console::PrintFatal("Couldn't compile the " + GetStringFromShaderType(type) + " shader from shader at path: " + m_path + " ==> "+std::string(message, logLength));
 	}
 	GLCall(glAttachShader(m_progID, shader));
+	GLCall(glDeleteShader(shader));
 	return src;
 }
 
