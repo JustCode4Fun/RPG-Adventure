@@ -8,6 +8,7 @@ Shader::Shader(const std::string& path)
 
 Shader::~Shader()
 {
+	glDeleteProgram(m_progID);
 }
 
 void Shader::enable()
@@ -44,13 +45,28 @@ void Shader::init()
 		_int log_length = 0;
 		char message[512];
 		GLCall(glGetProgramInfoLog(m_progID, 512, &log_length, message));
-		Console::PrintFatal("Couldn't compile shader at path: "+m_path + " ==> " + std::string(message, log_length));
+		Console::PrintFatal("Couldn't compile shader at path: " + m_path + " ==> " + std::string(message, log_length));
 	}
 }
 
 void Shader::setUniform1f(const char * name, float v)
 {
 	glProgramUniform1f(m_progID, getUniformLocation(name), v);
+}
+
+void Shader::setUniform2f(const char * name, const vec2<float>& v)
+{
+	glProgramUniform1fv(m_progID, getUniformLocation(name), 1, &v.m_x);
+}
+
+void Shader::setUniform4f(const char * name, const vec4<float>& v)
+{
+	glProgramUniform2fv(m_progID, getUniformLocation(name), 1, & v.m_x);
+}
+
+void Shader::setUniformMat4f(const char * name, const mat4<float>& v)
+{
+	glProgramUniformMatrix4fv(m_progID, getUniformLocation(name), 1, GL_FALSE, v.m_elements);
 }
 
 _int Shader::getUniformLocation(const char * name)
@@ -103,7 +119,7 @@ std::string Shader::loadShader(ShaderType type)
 		_int logLength;
 		char message[512];
 		GLCall(glGetShaderInfoLog(shader, 512, &logLength, message));
-		Console::PrintFatal("Couldn't compile the " + GetStringFromShaderType(type) + " shader from shader at path: " + m_path + " ==> "+std::string(message, logLength));
+		Console::PrintFatal("Couldn't compile the " + GetStringFromShaderType(type) + " shader from shader at path: " + m_path + " ==> " + std::string(message, logLength));
 	}
 	GLCall(glAttachShader(m_progID, shader));
 	GLCall(glDeleteShader(shader));

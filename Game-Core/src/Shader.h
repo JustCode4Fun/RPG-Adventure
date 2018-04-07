@@ -1,6 +1,9 @@
 #pragma once
 #include <GL\glew.h>
 #include "Engine.h"
+#include "Maths\mat4.h"
+#include "Maths\vec2.h"
+#include "Maths\vec4.h"
 
 class Shader {
 private:
@@ -27,6 +30,9 @@ private:
 	void init();
 public:
 	void setUniform1f(const char* name, float v);
+	void setUniform2f(const char* name, const vec2<float>& v);
+	void setUniform4f(const char* name, const vec4<float>& v);
+	void setUniformMat4f(const char* name, const mat4<float>& v);
 private:
 	_int getUniformLocation(const char* name);
 private:
