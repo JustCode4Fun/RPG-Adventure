@@ -15,8 +15,8 @@ private:
 private:
 	_int m_progID;
 	std::string m_path;
-	#ifdef E_DEBUG
 	std::string m_ShaderShaderSource;
+	#ifdef E_DEBUG
 	std::string m_VSSourceCode;
 	std::string m_FSSourceCode;
 	#endif

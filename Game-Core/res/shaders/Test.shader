@@ -12,7 +12,8 @@ out vec4 o_color;
 void main()
 {
 	o_color = col;
-	gl_Position = PVM*vec4(pos.xy+vec2(sin(time/2.0f),cos(time*2.0f)),0.0f,1.0f);
+	//gl_Position = PVM*vec4(pos.xy+vec2(sin(time/2.0f),cos(time*2.0f)),0.0f,1.0f);
+	gl_Position = PVM*vec4(pos, 1.0f);
 }
 #shader fragment
 #version 330 core
@@ -24,5 +25,5 @@ in vec4 o_color;
 
 void main()
 {
-	FragColor = vec4(o_color.xzy, sin(time)*.5f+0.5f);
+	FragColor = vec4(o_color.xzy, 1.0f);
 }

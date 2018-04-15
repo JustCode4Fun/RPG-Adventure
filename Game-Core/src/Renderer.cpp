@@ -31,7 +31,7 @@ void Renderer::init()
 
 	fillIndexBuffer(m_indexBuffer);
 
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, MAX_NUM_INDICES * sizeof(_uint), m_indexBuffer, GL_STATIC_DRAW);
+	GLCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, MAX_NUM_INDICES * sizeof(_uint), m_indexBuffer, GL_STATIC_DRAW));
 
 	GLCall(glEnableVertexAttribArray(0));
 	GLCall(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex2D), (const void*)0));
@@ -66,18 +66,18 @@ void Renderer::fillIndexBuffer(_uint*& indexBuffer)
 
 void Renderer::begin()
 {
-	glBindVertexArray(m_VAO);
-	glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
-	m_vertexBuffer = (Vertex2D*)glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
+	GLCall(glBindVertexArray(m_VAO));
+	GLCall(glBindBuffer(GL_ARRAY_BUFFER, m_VBO));
+	GLCall(m_vertexBuffer = (Vertex2D*)glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY));
 }
 
 void Renderer::submit(vec2<float> pos, vec2<float> size, vec4<float> color)
 {
 	vec2<float> position[4] = {
-		vec2<float>(pos.m_x, pos.m_y),
-		vec2<float>(pos.m_x + size.m_x, pos.m_y),
-		vec2<float>(pos.m_x + size.m_x, pos.m_y + size.m_y),
-		vec2<float>(pos.m_x, pos.m_y + size.m_y),
+		vec2<float>(pos.x, pos.y),
+		vec2<float>(pos.x + size.x, pos.y),
+		vec2<float>(pos.x + size.x, pos.y + size.y),
+		vec2<float>(pos.x, pos.y + size.y),
 	};
 
 	m_vertexBuffer->position = position[0];
@@ -101,14 +101,13 @@ void Renderer::submit(vec2<float> pos, vec2<float> size, vec4<float> color)
 
 void Renderer::end()
 {
-	glUnmapBuffer(GL_ARRAY_BUFFER);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindVertexArray(0);
+	GLCall(glUnmapBuffer(GL_ARRAY_BUFFER));
+	GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
+	GLCall(glBindVertexArray(0));
 }
 
 void Renderer::flush()
 {
-
 	GLCall(glBindVertexArray(m_VAO));
 	GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_IBO));
 	GLCall(glDrawElements(GL_TRIANGLES, m_numIndices, GL_UNSIGNED_INT, NULL));

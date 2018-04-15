@@ -1,5 +1,6 @@
 #include "Engine.h"
 #include <GL\glew.h>
+#include <glfw3.h>
 #ifdef E_WINDOWS
 #include <Windows.h>
 #include <iostream>
@@ -23,7 +24,7 @@ Console::LogLevel Console::s_CurrLogLevel = Console::LogLevel::FATAL_LEVEL;
 
 // TODO: Put these in seperate class
 void GLClearError() {
-	while (glGetError()!=GL_NO_ERROR);
+	while (glGetError() != GL_NO_ERROR);
 }
 bool GLPrintError() {
 	while (GLenum err = glGetError()) {
@@ -52,14 +53,14 @@ std::string Console::getTimeString()
 	if (min.length() == 1)min.insert(min.begin(), 1, '0');
 	if (sec.length() == 1)sec.insert(sec.begin(), 1, '0');
 
-	std::string time = year + "-" + month + "-" + day + " @ "  + hour + ":" + min + ":" + sec + "\t";
+	std::string time = year + "-" + month + "-" + day + " @ " + hour + ":" + min + ":" + sec + "\t";
 
 	return time;
 }
 
 void Console::SetConsoleTheme(ThemeColor font, ThemeColor background)
 {
-	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), (WORD)(background<<1)|(WORD)(font));
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), (WORD)(background << 1) | (WORD)(font));
 }
 
 void Console::SetConsoleTheme(Theme theme)
@@ -126,15 +127,6 @@ void Console::Print(const std::string & str)
 	#endif
 }
 
-template <typename T>
-void Console::Print(const T& t)
-{
-	ResetConsoleTheme();
-	#ifdef E_WINDOWS
-	std::cout << t << std::endl;
-	#endif
-}
-
 void Console::Pause()
 {
 	#ifdef E_WINDOWS
@@ -159,10 +151,26 @@ std::string loadFileToString(const std::string & path)
 		return "";
 	}
 	std::streampos size = f.tellg();
-	char* buffer = new char[(_int)size+1];
+	char* buffer = new char[(_int)size + 1];
 	f.seekg(0, std::ios::beg);
 	f.read(buffer, size);
 	buffer[size] = '\0';
 	f.close();
-	return std::string(buffer, (_int)size+1);
+	return std::string(buffer, (_int)size + 1);
+}
+
+double Timer::lastTime = glfwGetTime();
+int Timer::nbFrames = 0;
+
+void Timer::Update()
+{
+	// Measure speed
+	double currentTime = glfwGetTime();
+	nbFrames++;
+	if (currentTime - lastTime >= 1.0) { // If last prinf() was more than 1 sec ago
+										 // printf and reset timer
+		Console::Print(std::to_string(nbFrames) + "fps");
+		nbFrames = 0;
+		lastTime += 1.0;
+	}
 }

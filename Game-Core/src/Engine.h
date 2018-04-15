@@ -55,7 +55,7 @@ private:
 		ThemeColor m_font, m_background;
 
 		Theme(ThemeColor font, ThemeColor background) : m_font(font), m_background(background) {};
-		Theme(_int theme) { m_font = ThemeColor(theme >> 1); m_background = ThemeColor(theme & 0x0f); };
+		Theme(_int theme) { m_font = ThemeColor(theme >> 8); m_background = ThemeColor(theme & 0x0f); };
 
 	};
 public:
@@ -89,11 +89,17 @@ public:
 	static void PrintFatal(const std::string& fatal);
 
 	static void Print(const std::string& str);
-	template <typename T>
-	static void Print(const T& t);
 public:
 	static void Pause();
 	static void Pause(const std::string& message);
 };
 
 std::string loadFileToString(const std::string& path); // TODO: Put this in seperate class
+
+class Timer {
+private:
+	static double lastTime;
+	static int nbFrames;
+public:
+	static void Update();
+};

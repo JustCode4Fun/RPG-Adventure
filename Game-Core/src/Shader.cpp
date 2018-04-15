@@ -28,8 +28,8 @@ void Shader::init()
 	GLCall(m_progID = glCreateProgram());
 
 	#ifdef E_DEBUG
-	std::string m_VSSourceCode = loadShader(VertexShader);
-	std::string m_FSSourceCode = loadShader(FragmentShader);
+	m_VSSourceCode = loadShader(VertexShader);
+	m_FSSourceCode = loadShader(FragmentShader);
 	#else
 	loadShader(VertexShader);
 	loadShader(FragmentShader);
@@ -56,12 +56,12 @@ void Shader::setUniform1f(const char * name, float v)
 
 void Shader::setUniform2f(const char * name, const vec2<float>& v)
 {
-	glProgramUniform1fv(m_progID, getUniformLocation(name), 1, &v.m_x);
+	glProgramUniform1fv(m_progID, getUniformLocation(name), 1, &v.x);
 }
 
 void Shader::setUniform4f(const char * name, const vec4<float>& v)
 {
-	glProgramUniform2fv(m_progID, getUniformLocation(name), 1, & v.m_x);
+	glProgramUniform2fv(m_progID, getUniformLocation(name), 1, & v.x);
 }
 
 void Shader::setUniformMat4f(const char * name, const mat4<float>& v)
