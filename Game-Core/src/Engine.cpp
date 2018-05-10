@@ -161,12 +161,16 @@ std::string loadFileToString(const std::string & path)
 
 double Timer::lastTime = glfwGetTime();
 int Timer::nbFrames = 0;
+double Timer::deltaTime = 0;
+double Timer::lastFrameTime = 0;
 
 void Timer::Update()
 {
 	// Measure speed
 	double currentTime = glfwGetTime();
-	nbFrames++;
+	nbFrames++; 
+	deltaTime = currentTime - lastFrameTime;
+	lastFrameTime = currentTime;
 	if (currentTime - lastTime >= 1.0) { // If last prinf() was more than 1 sec ago
 										 // printf and reset timer
 		Console::Print(std::to_string(nbFrames) + "fps");

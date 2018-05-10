@@ -3,6 +3,8 @@
 #include "Maths\vec4.h"
 
 struct Vertex2D {
-	vec2<float> position;
-	vec4<float> color;
+	vec2f position;
+	vec2f uv;
+	vec4f color;
+	_float m_tid;
 };

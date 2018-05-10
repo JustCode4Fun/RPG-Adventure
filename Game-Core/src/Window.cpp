@@ -37,7 +37,7 @@ void Window::initGLFW()
 void Window::createGLFWWindow()
 {
 	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
-	glfwWindowHint(GLFW_SAMPLES, 8);
+	glfwWindowHint(GLFW_SAMPLES, 9);
 	m_window = glfwCreateWindow(m_width, m_height, m_title.c_str(), NULL, NULL);
 
 	if (!m_window) {
@@ -49,7 +49,9 @@ void Window::createGLFWWindow()
 
 	glfwMakeContextCurrent(m_window);
 	glfwSwapInterval(0.0f);
-	glEnable(GL_MULTISAMPLE);
+	GLCall(glEnable(GL_MULTISAMPLE));
+	GLCall(glEnable(GL_BLEND));
+	GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 }
 
 void Window::initGLEW()

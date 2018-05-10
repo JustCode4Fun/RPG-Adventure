@@ -29,12 +29,13 @@ public:
 private:
 	void init();
 public:
-	void setUniform1f(const char* name, float v);
-	void setUniform2f(const char* name, const vec2<float>& v);
-	void setUniform4f(const char* name, const vec4<float>& v);
-	void setUniformMat4f(const char* name, const mat4<float>& v);
+	void setUniform1f(const char* name, float v) const;
+	void setUniform2f(const char* name, const vec2<float>& v)const;
+	void setUniform4f(const char* name, const vec4<float>& v)const;
+	void setUniformMat4f(const char* name, const mat4<float>& v)const;
+	void setUniform1iv(const char* name, _uint count, _int* data)const;
 private:
-	_int getUniformLocation(const char* name);
+	_int getUniformLocation(const char* name)const;
 private:
 	std::string loadShader(ShaderType type);
 	std::string loadShaderSourceCode(ShaderType type);

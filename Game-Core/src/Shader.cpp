@@ -49,27 +49,32 @@ void Shader::init()
 	}
 }
 
-void Shader::setUniform1f(const char * name, float v)
+void Shader::setUniform1f(const char * name, float v)const
 {
 	glProgramUniform1f(m_progID, getUniformLocation(name), v);
 }
 
-void Shader::setUniform2f(const char * name, const vec2<float>& v)
+void Shader::setUniform2f(const char * name, const vec2<float>& v)const
 {
 	glProgramUniform1fv(m_progID, getUniformLocation(name), 1, &v.x);
 }
 
-void Shader::setUniform4f(const char * name, const vec4<float>& v)
+void Shader::setUniform4f(const char * name, const vec4<float>& v)const
 {
 	glProgramUniform2fv(m_progID, getUniformLocation(name), 1, & v.x);
 }
 
-void Shader::setUniformMat4f(const char * name, const mat4<float>& v)
+void Shader::setUniformMat4f(const char * name, const mat4<float>& v)const
 {
 	glProgramUniformMatrix4fv(m_progID, getUniformLocation(name), 1, GL_FALSE, v.m_elements);
 }
 
-_int Shader::getUniformLocation(const char * name)
+void Shader::setUniform1iv(const char* name, _uint count, _int* data)const
+{
+	glProgramUniform1iv(m_progID, getUniformLocation(name), count, data);
+}
+
+_int Shader::getUniformLocation(const char * name)const
 {
 	return glGetUniformLocation(m_progID, name);
 }

@@ -24,7 +24,9 @@ struct mat4 {
 		m_elements[2 * 4 + 2] = diagonal;
 		m_elements[3 * 4 + 3] = diagonal;
 	};
-
+	mat4(const mat4<T>& other) {
+		memcpy(m_elements, other.m_elements, sizeof(other.m_elements));
+	};
 	vec4<T> multiply(const vec4<T>& vec) const {
 		vec4<T> result;
 		result.x = vec.x * m_elements[0 * 4 + 0] + vec.y * m_elements[1 * 4 + 0] + vec.z * m_elements[2 * 4 + 0] + vec.w* m_elements[3 * 4 + 0];
@@ -110,7 +112,7 @@ struct mat4 {
 	};
 
 	mat4<T>& operator*=(const mat4<T>& mat) {
-		this->multiply(mat);
+		*this = this->multiply(mat);
 		return *this;
 	};
 

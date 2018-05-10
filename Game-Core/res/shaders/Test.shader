@@ -1,29 +1,49 @@
 #shader vertex
 #version 330 core
-layout(location = 0) in vec3 pos;
-layout(location = 1) in vec4 col;
+layout(location = 0) in vec2 pos;
+layout(location = 1) in vec2 uv;
+layout(location = 2) in vec4 col;
+layout(location = 3) in float tid;
 
 uniform mat4 PVM;
 
 uniform float time = 0;
 
-out vec4 o_color;
+out VERTEX_DATA{
+	vec2 pos;
+	vec2 uv;
+	vec4 col;
+	float tid;
+} vertex;
 
 void main()
 {
-	o_color = col;
-	//gl_Position = PVM*vec4(pos.xy+vec2(sin(time/2.0f),cos(time*2.0f)),0.0f,1.0f);
-	gl_Position = PVM*vec4(pos, 1.0f);
+	vertex.pos = pos;
+	vertex.uv = uv;
+	vertex.col = col;
+	vertex.tid = tid;
+	gl_Position = PVM*vec4(pos, 0.0f, 1.0f);
+
 }
 #shader fragment
 #version 330 core
 out vec4 FragColor;
 
+uniform sampler2D tex[32];
 uniform float time = 0;
 
-in vec4 o_color;
+in VERTEX_DATA{
+	vec2 pos;
+	vec2 uv;
+	vec4 col;
+	float tid;
+} vertex;
 
 void main()
 {
-	FragColor = vec4(o_color.xzy, 1.0f);
+	//int(vertex.tid - 0.5f)
+	vec4 texColor = vec4(1.0f);
+	if (vertex.tid > 0)
+		texColor = texture(tex[int(vertex.tid - 0.5f)], vertex.uv);
+	FragColor = texColor *vertex.col;
 }

@@ -3,12 +3,25 @@
 #include <GL\glew.h>
 
 #include "Vertex2D.h"
+#include "Renderable.h"
+#include "Texture.h"
+#include "Shader.h"
 
 #define MAX_NUM_RENDERABLES 60000
 #define MAX_NUM_INDICES 6 * MAX_NUM_RENDERABLES
 #define MAX_NUM_VERTICES 4*MAX_NUM_RENDERABLES
 
-Renderer::Renderer()
+static _int* fillTextureArray(_uint size) {
+	_int* arr = new _int[size];
+	for (_uint i = 0; i < size; i++) {
+		arr[i] = i;
+	}
+	return arr;
+}
+_int* Renderer::TEXTURE_ID_ARRAY = fillTextureArray(32);// TODO: Change 32 to #define MAX_TEXTURES
+
+Renderer::Renderer(const Shader* shader)
+	:m_shader(shader)
 {
 	init();
 }
@@ -34,9 +47,13 @@ void Renderer::init()
 	GLCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, MAX_NUM_INDICES * sizeof(_uint), m_indexBuffer, GL_STATIC_DRAW));
 
 	GLCall(glEnableVertexAttribArray(0));
-	GLCall(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex2D), (const void*)0));
+	GLCall(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex2D), (const void*)offsetof(Vertex2D, position)));
 	GLCall(glEnableVertexAttribArray(1));
-	GLCall(glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex2D), (const void*)(2*sizeof(float))));
+	GLCall(glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex2D), (const void*)offsetof(Vertex2D, uv)));
+	GLCall(glEnableVertexAttribArray(2));
+	GLCall(glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex2D), (const void*)offsetof(Vertex2D, color)));
+	GLCall(glEnableVertexAttribArray(3));
+	GLCall(glVertexAttribPointer(3, 1, GL_FLOAT, GL_FALSE, sizeof(Vertex2D), (const void*)offsetof(Vertex2D, m_tid)));
 
 	GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
 	GLCall(glBindVertexArray(0));
@@ -71,17 +88,20 @@ void Renderer::begin()
 	GLCall(m_vertexBuffer = (Vertex2D*)glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY));
 }
 
-void Renderer::submit(vec2<float> pos, vec2<float> size, vec4<float> color)
+void Renderer::submit(const vec2f& pos, const vec2f& size, const vec4f& color)
 {
-	vec2<float> position[4] = {
-		vec2<float>(pos.x, pos.y),
-		vec2<float>(pos.x + size.x, pos.y),
-		vec2<float>(pos.x + size.x, pos.y + size.y),
-		vec2<float>(pos.x, pos.y + size.y),
+	/*vec2f position[4] = {
+		vec2f(pos.x, pos.y),
+		vec2f(pos.x + size.x, pos.y),
+		vec2f(pos.x + size.x, pos.y + size.y),
+		vec2f(pos.x, pos.y + size.y),
 	};
 
+	const std::vector<vec2f>& uvs = ;
+
 	m_vertexBuffer->position = position[0];
-	m_vertexBuffer->color = color;
+	m_
+		m_vertexBuffer->color = color;
 	m_vertexBuffer++;
 
 	m_vertexBuffer->position = position[1];
@@ -94,6 +114,66 @@ void Renderer::submit(vec2<float> pos, vec2<float> size, vec4<float> color)
 
 	m_vertexBuffer->position = position[3];
 	m_vertexBuffer->color = color;
+	m_vertexBuffer++;
+
+	m_numIndices += 6;*/
+}
+
+void Renderer::submit(const Renderable& r)
+{
+	const vec2f& pos = r.getPosition();
+	const vec2f& size = r.getDimension();
+	vec2f position[4] = {
+		vec2f(pos.x, pos.y),
+		vec2f(pos.x + size.x, pos.y),
+		vec2f(pos.x + size.x, pos.y + size.y),
+		vec2f(pos.x, pos.y + size.y),
+	};
+	const std::vector<vec2f>& uvs = r.getUVs();
+	const vec4f& color = r.getColor();
+	const Texture* texture = r.getTexture();
+
+	float m_tid = 0.0f;
+	bool found = false;
+	for (_uint i = 0; i < m_textures.size(); i++) {
+		if (m_textures[i] == texture) {
+			m_tid = (float)(i+1);
+			found = true;
+			break;
+		}
+	}
+	if (!found) {
+		if (m_textures.size() == 32) {// TODO: Change 32 to #define MAX_TEXTURES
+			end();
+			flush();
+			begin();
+		}
+		m_textures.push_back(texture);
+		m_tid = (float)m_textures.size();
+	}
+
+	m_vertexBuffer->position = position[0];
+	m_vertexBuffer->uv = uvs[0];
+	m_vertexBuffer->color = color;
+	m_vertexBuffer->m_tid = m_tid;
+	m_vertexBuffer++;
+
+	m_vertexBuffer->position = position[1];
+	m_vertexBuffer->uv = uvs[1];
+	m_vertexBuffer->color = color;
+	m_vertexBuffer->m_tid = m_tid;
+	m_vertexBuffer++;
+
+	m_vertexBuffer->position = position[2];
+	m_vertexBuffer->uv = uvs[2];
+	m_vertexBuffer->color = color;
+	m_vertexBuffer->m_tid = m_tid;
+	m_vertexBuffer++;
+
+	m_vertexBuffer->position = position[3];
+	m_vertexBuffer->uv = uvs[3];
+	m_vertexBuffer->color = color;
+	m_vertexBuffer->m_tid = m_tid;
 	m_vertexBuffer++;
 
 	m_numIndices += 6;
@@ -109,6 +189,12 @@ void Renderer::end()
 void Renderer::flush()
 {
 	GLCall(glBindVertexArray(m_VAO));
+	for (_uint i = 0; i < m_textures.size(); i++) {
+		m_textures[i]->bind(i);
+	}
+	m_shader->setUniform1iv("tex", m_textures.size(), TEXTURE_ID_ARRAY);
 	GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_IBO));
 	GLCall(glDrawElements(GL_TRIANGLES, m_numIndices, GL_UNSIGNED_INT, NULL));
+	m_numIndices = 0;
+	m_textures.clear();
 }

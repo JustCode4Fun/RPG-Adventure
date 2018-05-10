@@ -101,5 +101,9 @@ private:
 	static double lastTime;
 	static int nbFrames;
 public:
+	static double deltaTime;
+private:
+	static double lastFrameTime;
+public:
 	static void Update();
 };
